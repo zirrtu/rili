@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+  <textarea name="input1" id="inputBox1" rows="30" style="width:100%" placeholder="日历文件条目" value=""> </textarea>
+  <input type="text" id="name" placeholder="组合名"></input>
+  <input type="text" id="author" placeholder="作者"></input>
+  <button id="execButton">下载为日历文件</button>
+</body>
+<script>
+  const inputBox1 = document.getElementById("inputBox1");
+  const execButton = document.getElementById("execButton");
+  const nameBox = document.getElementById("name");
+  const authorBox = document.getElementById("author");
+  inputBox1.value = "";
+
+  function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  execButton.onclick = function () {
+    const inputStr = inputBox1.value;
+    const nameStr = nameBox.value;
+    const authorStr = authorBox.value;
+    let finalOutput = `BEGIN:VCALENDAR
+PRODID:-//` + authorStr + `//` + nameStr + ` 直播日程表//CN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:` + nameStr + ` 直播日程表
+X-WR-TIMEZONE:Asia/Shanghai
+X-WR-CALDESC:` + nameStr + ` 直播日程表，由 @` + authorStr + ` 制作
+BEGIN:VTIMEZONE
+TZID:Asia/Shanghai
+X-LIC-LOCATION:Asia/Shanghai
+BEGIN:STANDARD
+TZOFFSETFROM:+0800
+TZOFFSETTO:+0800
+TZNAME:CST
+DTSTART:19700101T000000
+END:STANDARD
+END:VTIMEZONE
+` + inputStr + `
+END:VCALENDAR`;
+    download(nameStr.toLowerCase() + ".ics", finalOutput)
+  }
+</script>
+
+</html>
